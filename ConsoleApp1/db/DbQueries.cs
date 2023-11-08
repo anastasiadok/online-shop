@@ -18,51 +18,78 @@ namespace ConsoleApp1.db
 
         public OnlineshopContext db;
 
-        public IEnumerable<Product> GetAllBrandProducts(string brand)
+        public async Task<IEnumerable<Product>> GetAllBrandProducts(string brand)
         {
-            return db.Brands
+            var l = await db.Brands
                 .Where(b => b.Name == brand)
                 .Include(b => b.Products)
-                .First().Products
-                .ToList();
-        }
+                .FirstAsync();
 
-        public IEnumerable<ProductVariant> GetAllProdVariants(Guid prodId)
-        {
-            return db.Products
-                .Where(p => p.ProductId == prodId)
-                .Include(p => p.ProductVariants)
-                .First().ProductVariants
-                .ToList();
-        }
-
-        public Dictionary<Brand,int> GetAllBrandsProductsNumber()
-        {
-            Dictionary<Brand, int> d = new();
-            var brands= db.Brands.Include(b=>b.Products).ToList();
-            foreach( var brand in brands )
-            {
-                d.Add(brand, brand.Products.Count);
-            }
-            return d;
-        }
-
-        public IEnumerable<Product> GetAllSubcategoryProducts(Guid subcategory)
-        {
-            var l = db.Subcategories.Include(s=>s.Products).Where(s=>s.SubcategoryId== subcategory).First();
             return l.Products.ToList();
         }
 
-        public IEnumerable<Order> GetAllCompletedOrdersWithProduct(Guid prodId)
+        public async Task<IEnumerable<ProductVariant>> GetAllProdVariants(Guid prodId)
         {
-            var p= db.Products.Where(p=>p.ProductId==prodId).Include(p => p.ProductVariants).ThenInclude(v => v.OrderItems).ThenInclude(i => i.Order).AsSplitQuery().ToList();
-            var l = p.SelectMany(p => p.ProductVariants).SelectMany(p=>p.OrderItems).Select(i=>i.Order);
-            return l.Where(o=>o.Status==TransactionStatus.Completed);
+            var l = await db.Products
+                .Where(p => p.ProductId == prodId)
+                .Include(p => p.ProductVariants)
+                .FirstAsync();
+
+            return l.ProductVariants
+                .OrderBy(p => p.Product.Name)
+                .ThenBy(p => p.Color)
+                .ToList();
         }
 
-        public IEnumerable<Review> GetProductReviews(Guid prodId)
+        public async Task<Dictionary<Brand, int>> GetAllBrandsProductsNumber()
         {
-            return db.Products.Where(p => p.ProductId == prodId).Include(p => p.Reviews).First().Reviews.ToList();
+            Dictionary<Brand, int> d = new();
+            await db.Brands.Include(b => b.Products)
+                .ForEachAsync(b => d.Add(b, b.Products.Count));
+
+            return d;
+        }
+
+        public async Task<IEnumerable<Product>> GetAllSubcategoryProducts(Guid subcategory)
+        {
+            var l = await db.Subcategories
+                .Include(s => s.Products)
+                .Where(s => s.SubcategoryId == subcategory)
+                .FirstAsync();
+
+            return l.Products.ToList();
+        }
+
+        public async Task<IEnumerable<Order>> GetAllCompletedOrdersWithProduct(Guid prodId)
+        {
+            var p = db.Products
+                .Where(p => p.ProductId == prodId)
+                .Include(p => p.ProductVariants)
+                .ThenInclude(v => v.OrderItems)
+                .ThenInclude(i => i.Order)
+                .AsSplitQuery();
+
+            var l = p
+                .SelectMany(p => p.ProductVariants)
+                .SelectMany(p => p.OrderItems)
+                .Select(i => i.Order);
+
+            var res = await l
+                .Where(o => o.Status == TransactionStatus.Completed)
+                .OrderBy(o => o.CreatedAt)
+                .ToListAsync();
+
+            return res;
+        }
+
+        public async Task<IEnumerable<Review>> GetProductReviews(Guid prodId)
+        {
+            var l = await db.Products
+                .Where(p => p.ProductId == prodId)
+                .Include(p => p.Reviews)
+                .FirstAsync();
+
+            return l.Reviews.ToList();
         }
     }
 }

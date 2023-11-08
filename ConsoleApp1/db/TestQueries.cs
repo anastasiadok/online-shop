@@ -20,7 +20,7 @@ namespace ConsoleApp1.db
         {
             foreach (var b in q.db.Brands.Select(b => b.Name).ToList())
             {
-                var res = q.GetAllBrandProducts(b);
+                var res = q.GetAllBrandProducts(b).Result;
                 Console.WriteLine(b + " " + res.Count());
                 foreach (var v in res)
                 {
@@ -33,7 +33,7 @@ namespace ConsoleApp1.db
         {
             foreach (var b in q.db.Products.Select(b => b.ProductId).ToList())
             {
-                var res = q.GetAllProdVariants(b);
+                var res = q.GetAllProdVariants(b).Result;
                 Console.WriteLine(q.db.Products.Where(p => p.ProductId == b).First().Name + " " + res.Count());
                 foreach (var v in res)
                 {
@@ -44,7 +44,7 @@ namespace ConsoleApp1.db
 
         public void Test3()
         {
-            var res = q.GetAllBrandsProductsNumber();
+            var res = q.GetAllBrandsProductsNumber().Result;
             foreach (var v in res)
             {
                 Console.WriteLine(v.Key.Name + " " + v.Value);
@@ -55,7 +55,7 @@ namespace ConsoleApp1.db
         {
             foreach (var s in q.db.Subcategories.Select(s => s.SubcategoryId).ToList())
             {
-                var res = q.GetAllSubcategoryProducts(s);
+                var res = q.GetAllSubcategoryProducts(s).Result;
                 Console.WriteLine(q.db.Subcategories.Where(u => u.SubcategoryId == s).First().Name + " " + res.Count());
                 foreach (var v in res)
                 {
@@ -68,7 +68,7 @@ namespace ConsoleApp1.db
         {
             foreach (var b in q.db.Products.Select(b => b.ProductId).ToList())
             {
-                var res = q.GetAllCompletedOrdersWithProduct(b);
+                var res = q.GetAllCompletedOrdersWithProduct(b).Result;
                 Console.WriteLine(q.db.Products.Where(p => p.ProductId == b).First().Name + " " + res.Count());
                 foreach (var v in res)
                 {
@@ -81,7 +81,7 @@ namespace ConsoleApp1.db
         {
             foreach (var b in q.db.Products.Select(b => b.ProductId).ToList())
             {
-                var res = q.GetProductReviews(b);
+                var res = q.GetProductReviews(b).Result;
                 Console.WriteLine(q.db.Products.Where(p => p.ProductId == b).First().Name + " " + res.Count());
                 foreach (var v in res)
                 {

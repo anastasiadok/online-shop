@@ -17,30 +17,30 @@ namespace ConsoleApp1.db
 
         readonly OnlineshopContext db;
 
-        public void UpdateOverEntityState(User user,string firstname)
+        public async Task UpdateOverEntityState(User user,string firstname)
         {
             db.Users.Entry(user).State = EntityState.Detached;
             user.FirstName = firstname;
             db.Users.Attach(user);
             db.Users.Entry(user).State = EntityState.Modified;
-            db.SaveChanges();
+            await db.SaveChangesAsync();
         }
-        public void UpdateOverExicution(User user,string firstname)
+        public async Task UpdateOverExicution(User user,string firstname)
         {
-            db.Users.Where(u=>u==user)
-                .ExecuteUpdate(u=>u.SetProperty(u=>u.FirstName,firstname));
+            await db.Users.Where(u=>u==user)
+            .ExecuteUpdateAsync(u=>u.SetProperty(u=>u.FirstName,firstname));
         }
 
-        public void AddReview(Review review)
+        public async Task AddReview(Review review)
         {
             db.Reviews.Add(review);
-            db.SaveChanges();
+            await db.SaveChangesAsync();
             var prodreviews = db.Reviews.Where(r => r.Product == review.Product);
             var s = prodreviews.Select(r => r.Rating).Sum();
             var c = prodreviews.Count();
             review.Product.AverageRating=(float)s/c;
             db.Update(review.Product);
-            db.SaveChanges();
+            await db.SaveChangesAsync();
         }
     }
 }
