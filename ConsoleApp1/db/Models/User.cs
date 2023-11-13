@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace ConsoleApp1.db.Models;
 
-namespace ConsoleApp1.db.Models;
-
-public partial class User
+public class User
 {
     public Guid UserId { get; set; }
 

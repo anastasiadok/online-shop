@@ -13,7 +13,7 @@ namespace ConsoleApp1
             {
                 DbQueries q = new(db);
                 TestQueries test = new(q);
-                test.Test3();
+                test.Test2();
             }
         }
     }

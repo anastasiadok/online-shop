@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ConsoleApp1.Migrations
 {
     [DbContext(typeof(OnlineshopContext))]
-    [Migration("20231104072530_InitialCreate")]
+    [Migration("20231113061844_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -286,14 +286,14 @@ namespace ConsoleApp1.Migrations
 
                     b.Property<Guid>("SubcategoryId")
                         .HasColumnType("uuid")
-                        .HasColumnName("category_id");
+                        .HasColumnName("subcategory_id");
 
                     b.HasKey("ProductId")
                         .HasName("products_pkey");
 
                     b.HasIndex("SubcategoryId");
 
-                    b.HasIndex(new[] { "BrandId", "SubcategoryId" }, "prod_by_brand_category");
+                    b.HasIndex(new[] { "BrandId", "SubcategoryId" }, "prod_by_brand_subcategory");
 
                     b.HasIndex(new[] { "Name" }, "products_name_key")
                         .IsUnique();
@@ -433,7 +433,7 @@ namespace ConsoleApp1.Migrations
                 {
                     b.Property<Guid>("SubcategoryId")
                         .HasColumnType("uuid")
-                        .HasColumnName("category_id");
+                        .HasColumnName("subcategory_id");
 
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("uuid");
@@ -617,7 +617,7 @@ namespace ConsoleApp1.Migrations
                         .WithMany("Products")
                         .HasForeignKey("SubcategoryId")
                         .IsRequired()
-                        .HasConstraintName("products_category_id_fkey");
+                        .HasConstraintName("products_subcategory_id_fkey");
 
                     b.Navigation("Brand");
 
@@ -673,7 +673,7 @@ namespace ConsoleApp1.Migrations
             modelBuilder.Entity("ConsoleApp1.db.Models.Subcategory", b =>
                 {
                     b.HasOne("ConsoleApp1.db.Models.Category", "Category")
-                        .WithMany("SubCategories")
+                        .WithMany("Subcategories")
                         .HasForeignKey("CategoryId")
                         .IsRequired()
                         .HasConstraintName("category_subcategories_id_fkey");
@@ -693,7 +693,7 @@ namespace ConsoleApp1.Migrations
 
             modelBuilder.Entity("ConsoleApp1.db.Models.Category", b =>
                 {
-                    b.Navigation("SubCategories");
+                    b.Navigation("Subcategories");
                 });
 
             modelBuilder.Entity("ConsoleApp1.db.Models.Color", b =>

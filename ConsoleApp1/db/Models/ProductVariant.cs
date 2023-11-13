@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace ConsoleApp1.db.Models;
 
-namespace ConsoleApp1.db.Models;
-
-public partial class ProductVariant
+public class ProductVariant
 {
     public Guid ProductVariantId { get; set; }
 

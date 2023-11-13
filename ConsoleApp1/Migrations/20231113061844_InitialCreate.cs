@@ -121,13 +121,13 @@ namespace ConsoleApp1.Migrations
                 name: "subcategories",
                 columns: table => new
                 {
-                    category_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    subcategory_id = table.Column<Guid>(type: "uuid", nullable: false),
                     CategoryId = table.Column<Guid>(type: "uuid", nullable: false),
                     name = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("subcategories_pkey", x => x.category_id);
+                    table.PrimaryKey("subcategories_pkey", x => x.subcategory_id);
                     table.ForeignKey(
                         name: "category_subcategories_id_fkey",
                         column: x => x.CategoryId,
@@ -167,7 +167,7 @@ namespace ConsoleApp1.Migrations
                 {
                     product_id = table.Column<Guid>(type: "uuid", nullable: false),
                     brand_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    category_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    subcategory_id = table.Column<Guid>(type: "uuid", nullable: false),
                     name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     price = table.Column<decimal>(type: "money", nullable: false),
                     average_rating = table.Column<float>(type: "real", nullable: true)
@@ -181,10 +181,10 @@ namespace ConsoleApp1.Migrations
                         principalTable: "brands",
                         principalColumn: "brand_id");
                     table.ForeignKey(
-                        name: "products_category_id_fkey",
-                        column: x => x.category_id,
+                        name: "products_subcategory_id_fkey",
+                        column: x => x.subcategory_id,
                         principalTable: "subcategories",
-                        principalColumn: "category_id");
+                        principalColumn: "subcategory_id");
                 });
 
             migrationBuilder.CreateTable(
@@ -416,14 +416,14 @@ namespace ConsoleApp1.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_products_category_id",
+                name: "IX_products_subcategory_id",
                 table: "products",
-                column: "category_id");
+                column: "subcategory_id");
 
             migrationBuilder.CreateIndex(
-                name: "prod_by_brand_category",
+                name: "prod_by_brand_subcategory",
                 table: "products",
-                columns: new[] { "brand_id", "category_id" });
+                columns: new[] { "brand_id", "subcategory_id" });
 
             migrationBuilder.CreateIndex(
                 name: "products_name_key",

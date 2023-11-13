@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace ConsoleApp1.db.Models;
 
-namespace ConsoleApp1.db.Models;
-
-public partial class CartItem
+public class CartItem
 {
     public Guid ProductVariantId { get; set; }
 

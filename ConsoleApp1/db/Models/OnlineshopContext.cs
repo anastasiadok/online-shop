@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
 namespace ConsoleApp1.db.Models;
@@ -22,37 +20,37 @@ public partial class OnlineshopContext : DbContext
     {
     }
 
-    public virtual DbSet<Address> Addresses { get; set; }
+    public DbSet<Address> Addresses { get; set; }
 
-    public virtual DbSet<Brand> Brands { get; set; }
+    public DbSet<Brand> Brands { get; set; }
 
-    public virtual DbSet<CartItem> CartItems { get; set; }
+    public DbSet<CartItem> CartItems { get; set; }
 
-    public virtual DbSet<Category> Categories { get; set; }
+    public DbSet<Category> Categories { get; set; }
 
-    public virtual DbSet<Color> Colors { get; set; }
+    public DbSet<Color> Colors { get; set; }
 
-    public virtual DbSet<Media> Media { get; set; }
+    public DbSet<Media> Media { get; set; }
 
-    public virtual DbSet<Order> Orders { get; set; }
+    public DbSet<Order> Orders { get; set; }
 
-    public virtual DbSet<OrderItem> OrderItems { get; set; }
+    public DbSet<OrderItem> OrderItems { get; set; }
 
-    public virtual DbSet<OrderTransaction> OrderTransactions { get; set; }
+    public DbSet<OrderTransaction> OrderTransactions { get; set; }
 
-    public virtual DbSet<Product> Products { get; set; }
+    public DbSet<Product> Products { get; set; }
 
-    public virtual DbSet<ProductVariant> ProductVariants { get; set; }
+    public DbSet<ProductVariant> ProductVariants { get; set; }
 
-    public virtual DbSet<Review> Reviews { get; set; }
+    public DbSet<Review> Reviews { get; set; }
 
-    public virtual DbSet<Section> Sections { get; set; }
+    public DbSet<Section> Sections { get; set; }
 
-    public virtual DbSet<Size> Sizes { get; set; }
+    public DbSet<Size> Sizes { get; set; }
 
-    public virtual DbSet<Subcategory> Subcategories { get; set; }
+    public DbSet<Subcategory> Subcategories { get; set; }
 
-    public virtual DbSet<User> Users { get; set; }
+    public DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
