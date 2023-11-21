@@ -12,7 +12,7 @@ public class Order
 
     public DateTime CreatedAt { get; set; }
 
-    public TransactionStatus Status { get; set; }
+    public OrderStatus Status { get; set; }
 
     public virtual Address Address { get; set; } = null!;
 

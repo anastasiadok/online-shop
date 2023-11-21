@@ -1,5 +1,8 @@
-﻿using OnlineShop.Data;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
+using OnlineShop.Data;
 using OnlineShop.Data.Models;
+using OnlineShop.Domain.Dtos;
 using OnlineShop.Domain.Interfaces;
 using System.Runtime.CompilerServices;
 
@@ -13,10 +16,19 @@ public class BrandService : IBrandService
     {
         _context = context;
     }
-    public async Task Add(Brand brand)
+    public async Task<bool> Add(BrandDto brand)
     {
-        await _context.Brands.AddAsync(brand);
+        Brand newBrand = new()
+        {
+            BrandId = Guid.NewGuid(),
+            Name = brand.Name,
+            Products = brand.Products
+        };
+
+        await _context.Brands.AddAsync(newBrand);
         await _context.SaveChangesAsync();
+
+        return true;
     }
 
     public async Task<Brand> Get(Guid id)
@@ -29,16 +41,31 @@ public class BrandService : IBrandService
         return _context.Brands.ToList();
     }
 
-    public async Task Remove(Guid id)
+    public async Task<bool> Remove(Guid id)
     {
-        var b = await _context.Brands.FindAsync(id);
-        _context.Brands.Remove(b);
+        var brand = await _context.Brands.FindAsync(id);
+
+        if (brand is null)
+            return false;
+
+        _context.Brands.Remove(brand);
         await _context.SaveChangesAsync();
+
+        return true;
     }
 
-    public async Task Update(Brand brand)
+    public async Task<bool> Update(Guid id, BrandDto brand)
     {
-        _context.Brands.Update(brand);
+        var old = await _context.Brands.FindAsync(id);
+
+        if (old is null)
+            return false;
+
+        old.Name = brand.Name;
+        old.Products = brand.Products;
+        _context.Brands.Update(old);
         await _context.SaveChangesAsync();
+
+        return true;
     }
 }

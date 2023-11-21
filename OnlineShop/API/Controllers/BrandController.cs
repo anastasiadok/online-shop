@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Data.Models;
+using OnlineShop.Domain.Dtos;
 using OnlineShop.Domain.Interfaces;
-using System.Text.Json;
 
 namespace OnlineShop.API.Controllers
 {
@@ -16,38 +15,54 @@ namespace OnlineShop.API.Controllers
             _brandService = brandService;
         }
 
-        [HttpGet("getall")]
+        [HttpGet]
         public IActionResult GetAll()
         {
-            var b = _brandService.GetAll();
-            return Ok(b);
+            var brands = _brandService.GetAll();
+            return Ok(brands);
         }
 
-        [HttpGet("get")]
-        public async Task<ActionResult<Brand>> Get(Guid id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Brand>> Get([FromRoute]Guid id)
         {
-            var b = await _brandService.Get(id);
-            return Ok(b);
+            var brand = await _brandService.Get(id);
+
+            if (brand is null)
+                return NotFound();
+
+            return Ok(brand);
         }
 
-        [HttpPost("add")]
-        public async Task<IActionResult> Add(Brand brand)
+        [HttpPost]
+        public async Task<IActionResult> Add([FromBody]BrandDto brand)
         {
-            await _brandService.Add(brand);
+            bool result = await _brandService.Add(brand);
+
+            if (!result)
+                return BadRequest();
+
             return Ok();
         }
 
-        [HttpPost("update")]
-        public async Task<IActionResult> Update(Brand brand)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update([FromRoute]Guid id,[FromBody] BrandDto brand)
         {
-            await _brandService.Update(brand);
+            bool result = await _brandService.Update(id, brand);
+
+            if (!result)
+                return BadRequest();
+
             return Ok();
         }
 
-        [HttpDelete("delete")]
-        public async Task<IActionResult> Delete(Guid id)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete([FromRoute]Guid id)
         {
-            await _brandService.Remove(id);
+            bool result = await _brandService.Remove(id);
+
+            if (!result)
+                return NotFound();
+
             return Ok();
         }
     }

@@ -1,6 +1,6 @@
 ﻿namespace OnlineShop.Data.Models;
 
-public enum TransactionStatus
+public enum OrderStatus
 {
     InReview,
     InDelivery,

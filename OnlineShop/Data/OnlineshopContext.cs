@@ -1,18 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Npgsql;
 using OnlineShop.Data.Models;
-using OnlineShop.Data.Maps;
+using System.Reflection;
 
 namespace OnlineShop.Data;
 
 public partial class OnlineshopContext : DbContext
 {
-    static OnlineshopContext()
-    {
-        NpgsqlConnection.GlobalTypeMapper.MapEnum<TransactionStatus>("status_type");
-        NpgsqlConnection.GlobalTypeMapper.MapEnum<UserType>("user_type");
-    }
-
     public OnlineshopContext()
     {
 
@@ -40,24 +33,9 @@ public partial class OnlineshopContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder
-            .HasPostgresEnum("status_type", new[] { "in_review", "in_delivery", "completed", "cancelled" })
-            .HasPostgresEnum("user_type", new[] { "admin", "user" });
+        modelBuilder.HasPostgresEnum<UserType>();
+        modelBuilder.HasPostgresEnum<OrderStatus>();
 
-        modelBuilder.ApplyConfiguration(new AddressMap());
-        modelBuilder.ApplyConfiguration(new BrandMap());
-        modelBuilder.ApplyConfiguration(new CartItemMap());
-        modelBuilder.ApplyConfiguration(new CategoryMap());
-        modelBuilder.ApplyConfiguration(new ColorMap());
-        modelBuilder.ApplyConfiguration(new MediaMap()); 
-        modelBuilder.ApplyConfiguration(new OrderMap());
-        modelBuilder.ApplyConfiguration(new OrderItemMap());
-        modelBuilder.ApplyConfiguration(new OrderTransactionMap()); 
-        modelBuilder.ApplyConfiguration(new ProductMap());
-        modelBuilder.ApplyConfiguration(new ProductVariantMap());
-        modelBuilder.ApplyConfiguration(new ReviewMap());
-        modelBuilder.ApplyConfiguration(new SectionMap());
-        modelBuilder.ApplyConfiguration(new SizeMap());
-        modelBuilder.ApplyConfiguration(new UserMap());
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
 }

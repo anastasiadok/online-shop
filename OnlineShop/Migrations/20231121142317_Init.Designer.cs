@@ -6,14 +6,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using OnlineShop.Data;
-using OnlineShop.Data.Models;
 
 #nullable disable
 
 namespace OnlineShop.Migrations
 {
     [DbContext(typeof(OnlineshopContext))]
-    [Migration("20231117162409_Init")]
+    [Migration("20231121142317_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -24,87 +23,75 @@ namespace OnlineShop.Migrations
                 .HasAnnotation("ProductVersion", "7.0.14")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "status_type", new[] { "in_review", "in_delivery", "completed", "cancelled" });
+            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "order_status", new[] { "in_review", "in_delivery", "completed", "cancelled" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "user_type", new[] { "admin", "user" });
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("OnlineShop.Data.Models.Address", b =>
                 {
                     b.Property<Guid>("AddressId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("address_id");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Address1")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("address");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("AddressId")
-                        .HasName("adresses_pkey");
+                    b.HasKey("AddressId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("addresses", (string)null);
+                    b.ToTable("Addresses");
                 });
 
             modelBuilder.Entity("OnlineShop.Data.Models.Brand", b =>
                 {
                     b.Property<Guid>("BrandId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("brand_id");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(30)
-                        .HasColumnType("character varying(30)")
-                        .HasColumnName("name");
+                        .HasColumnType("character varying(30)");
 
-                    b.HasKey("BrandId")
-                        .HasName("brands_pkey");
+                    b.HasKey("BrandId");
 
-                    b.HasIndex(new[] { "Name" }, "brands_name_key")
+                    b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("brands", (string)null);
+                    b.ToTable("Brands");
                 });
 
             modelBuilder.Entity("OnlineShop.Data.Models.CartItem", b =>
                 {
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_id");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("ProductVariantId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("product_var_id");
+                        .HasColumnType("uuid");
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("integer")
-                        .HasColumnName("quantity");
+                        .HasColumnType("integer");
 
-                    b.HasKey("UserId", "ProductVariantId")
-                        .HasName("pk_cart_item");
+                    b.HasKey("UserId", "ProductVariantId");
 
                     b.HasIndex("ProductVariantId");
 
-                    b.ToTable("cart_items", (string)null);
+                    b.ToTable("CartItems");
                 });
 
             modelBuilder.Entity("OnlineShop.Data.Models.Category", b =>
                 {
                     b.Property<Guid>("CategoryId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("category_id");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasColumnName("name");
+                        .HasColumnType("character varying(20)");
 
                     b.Property<Guid?>("ParentCategoryId")
                         .HasColumnType("uuid");
@@ -112,106 +99,89 @@ namespace OnlineShop.Migrations
                     b.Property<Guid>("SectionId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("CategoryId")
-                        .HasName("categories_pkey");
+                    b.HasKey("CategoryId");
 
                     b.HasIndex("ParentCategoryId");
 
                     b.HasIndex("SectionId");
 
-                    b.HasIndex(new[] { "Name", "SectionId" }, "categories_name_sections_key")
+                    b.HasIndex("Name", "SectionId")
                         .IsUnique();
 
-                    b.ToTable("categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("OnlineShop.Data.Models.Color", b =>
                 {
                     b.Property<Guid>("ColorId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("color_id");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("ColorName")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasColumnName("color_name");
+                        .HasColumnType("character varying(20)");
 
-                    b.HasKey("ColorId")
-                        .HasName("colors_pkey");
+                    b.HasKey("ColorId");
 
-                    b.HasIndex(new[] { "ColorName" }, "colors_color_name_key")
+                    b.HasIndex("ColorName")
                         .IsUnique();
 
-                    b.ToTable("colors", (string)null);
+                    b.ToTable("Colors");
                 });
 
             modelBuilder.Entity("OnlineShop.Data.Models.Media", b =>
                 {
                     b.Property<Guid>("MediaId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("medium_id");
+                        .HasColumnType("uuid");
 
                     b.Property<byte[]>("Bytes")
                         .IsRequired()
-                        .HasColumnType("bytea")
-                        .HasColumnName("bytes");
+                        .HasColumnType("bytea");
 
                     b.Property<string>("FileName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("file_name");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("FileType")
                         .IsRequired()
                         .HasMaxLength(10)
-                        .HasColumnType("character varying(10)")
-                        .HasColumnName("file_type");
+                        .HasColumnType("character varying(10)");
 
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("MediaId")
-                        .HasName("media_pkey");
+                    b.HasKey("MediaId");
 
                     b.HasIndex("ProductId");
 
-                    b.HasIndex(new[] { "FileType", "FileName" }, "media_file_type_file_name_key")
+                    b.HasIndex("FileType", "FileName")
                         .IsUnique();
 
-                    b.ToTable("media", (string)null);
+                    b.ToTable("Media");
                 });
 
             modelBuilder.Entity("OnlineShop.Data.Models.Order", b =>
                 {
                     b.Property<Guid>("OrderId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("order_id");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("AddressId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("address_id");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasPrecision(6)
-                        .HasColumnType("timestamp(6) with time zone")
-                        .HasColumnName("created_at");
+                        .HasColumnType("timestamp with time zone");
 
-                    b.Property<TransactionStatus>("Status")
-                        .HasColumnType("status_type")
-                        .HasColumnName("status");
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("TotalPrice")
-                        .HasColumnType("money")
-                        .HasColumnName("total_price");
+                        .HasColumnType("numeric");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_id");
+                        .HasColumnType("uuid");
 
-                    b.HasKey("OrderId")
-                        .HasName("orders_pkey");
+                    b.HasKey("OrderId");
 
                     b.HasIndex("AddressId");
 
@@ -223,120 +193,97 @@ namespace OnlineShop.Migrations
             modelBuilder.Entity("OnlineShop.Data.Models.OrderItem", b =>
                 {
                     b.Property<Guid>("ProductVariantId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("product_var_id");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("OrderId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("order_id");
+                        .HasColumnType("uuid");
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("integer")
-                        .HasColumnName("quantity");
+                        .HasColumnType("integer");
 
-                    b.HasKey("ProductVariantId", "OrderId")
-                        .HasName("pk_order_item");
+                    b.HasKey("ProductVariantId", "OrderId");
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("order_items", (string)null);
+                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("OnlineShop.Data.Models.OrderTransaction", b =>
                 {
                     b.Property<Guid>("OrderId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("order_id");
+                        .HasColumnType("uuid");
 
-                    b.Property<TransactionStatus>("Status")
-                        .HasColumnType("status_type")
-                        .HasColumnName("status");
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasPrecision(6)
-                        .HasColumnType("timestamp(6) with time zone")
-                        .HasColumnName("updated_at");
+                        .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("OrderId", "Status")
-                        .HasName("pk_order_tr");
+                    b.HasKey("OrderId", "Status");
 
-                    b.HasIndex(new[] { "OrderId", "Status" }, "by_order_status")
+                    b.HasIndex("OrderId", "Status")
                         .IsUnique();
 
-                    b.ToTable("order_transactions", (string)null);
+                    b.ToTable("OrderTransactions");
                 });
 
             modelBuilder.Entity("OnlineShop.Data.Models.Product", b =>
                 {
                     b.Property<Guid>("ProductId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("product_id");
+                        .HasColumnType("uuid");
 
                     b.Property<float?>("AverageRating")
-                        .HasColumnType("real")
-                        .HasColumnName("average_rating");
+                        .HasColumnType("real");
 
                     b.Property<Guid>("BrandId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("brand_id");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("CategoryId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("category_id");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("name");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("money")
-                        .HasColumnName("price");
+                        .HasColumnType("numeric");
 
-                    b.HasKey("ProductId")
-                        .HasName("products_pkey");
+                    b.HasKey("ProductId");
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex(new[] { "BrandId", "CategoryId" }, "prod_by_brand_category");
-
-                    b.HasIndex(new[] { "Name" }, "products_name_key")
+                    b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("products", (string)null);
+                    b.HasIndex("BrandId", "CategoryId");
+
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("OnlineShop.Data.Models.ProductVariant", b =>
                 {
                     b.Property<Guid>("ProductVariantId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("prod_variant_id");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("ColorId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("color_id");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("ProductId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("product_id");
+                        .HasColumnType("uuid");
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("integer")
-                        .HasColumnName("quantity");
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("SizeId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("size_id");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Sku")
                         .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("sku");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
-                    b.HasKey("ProductVariantId")
-                        .HasName("product_variants_pkey");
+                    b.HasKey("ProductVariantId");
 
                     b.HasIndex("ColorId");
 
@@ -344,144 +291,121 @@ namespace OnlineShop.Migrations
 
                     b.HasIndex("SizeId");
 
-                    b.HasIndex(new[] { "Sku" }, "product_variants_sku_key")
+                    b.HasIndex("Sku")
                         .IsUnique();
 
-                    b.ToTable("product_variants", (string)null);
+                    b.ToTable("ProductVariants");
                 });
 
             modelBuilder.Entity("OnlineShop.Data.Models.Review", b =>
                 {
                     b.Property<Guid>("ReviewId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("review_id");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("CommentText")
                         .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)")
-                        .HasColumnName("comment_text");
+                        .HasColumnType("character varying(2000)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasPrecision(6)
-                        .HasColumnType("timestamp(6) with time zone")
-                        .HasColumnName("created_at");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("ProductId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("product_id");
+                        .HasColumnType("uuid");
 
                     b.Property<int>("Rating")
-                        .HasColumnType("integer")
-                        .HasColumnName("rating");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Title")
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("title");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_id");
+                        .HasColumnType("uuid");
 
-                    b.HasKey("ReviewId")
-                        .HasName("reviews_pkey");
+                    b.HasKey("ReviewId");
 
                     b.HasIndex("UserId");
 
-                    b.HasIndex(new[] { "ProductId", "Rating" }, "by_product_rating");
+                    b.HasIndex("ProductId", "Rating");
 
-                    b.ToTable("reviews", (string)null);
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("OnlineShop.Data.Models.Section", b =>
                 {
                     b.Property<Guid>("SectionId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("section_id");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasColumnName("name");
+                        .HasColumnType("character varying(20)");
 
-                    b.HasKey("SectionId")
-                        .HasName("sections_pkey");
+                    b.HasKey("SectionId");
 
-                    b.HasIndex(new[] { "Name" }, "sections_name_key")
+                    b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("sections", (string)null);
+                    b.ToTable("Sections");
                 });
 
             modelBuilder.Entity("OnlineShop.Data.Models.Size", b =>
                 {
                     b.Property<Guid>("SizeId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("size_id");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("SizeName")
                         .IsRequired()
                         .HasMaxLength(10)
-                        .HasColumnType("character varying(10)")
-                        .HasColumnName("size_name");
+                        .HasColumnType("character varying(10)");
 
-                    b.HasKey("SizeId")
-                        .HasName("sizes_pkey");
+                    b.HasKey("SizeId");
 
-                    b.HasIndex(new[] { "SizeName" }, "sizes_size_name_key")
+                    b.HasIndex("SizeName")
                         .IsUnique();
 
-                    b.ToTable("sizes", (string)null);
+                    b.ToTable("Sizes");
                 });
 
             modelBuilder.Entity("OnlineShop.Data.Models.User", b =>
                 {
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_id");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
-                        .HasColumnName("email");
+                        .HasColumnType("character varying(40)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(30)
-                        .HasColumnType("character varying(30)")
-                        .HasColumnName("first_name");
+                        .HasColumnType("character varying(30)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("last_name");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("password");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasColumnName("phone");
+                        .HasColumnType("character varying(20)");
 
-                    b.Property<UserType>("Role")
-                        .HasColumnType("user_type")
-                        .HasColumnName("role");
+                    b.Property<int>("Role")
+                        .HasColumnType("integer");
 
-                    b.HasKey("UserId")
-                        .HasName("users_pkey");
+                    b.HasKey("UserId");
 
-                    b.HasIndex(new[] { "Email", "Phone" }, "users_emai_phone_key")
+                    b.HasIndex("Email", "Phone")
                         .IsUnique();
 
-                    b.ToTable("users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("OnlineShop.Data.Models.Address", b =>
@@ -489,8 +413,7 @@ namespace OnlineShop.Migrations
                     b.HasOne("OnlineShop.Data.Models.User", "User")
                         .WithMany("Addresses")
                         .HasForeignKey("UserId")
-                        .IsRequired()
-                        .HasConstraintName("adresses_user_id_fkey");
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -500,14 +423,12 @@ namespace OnlineShop.Migrations
                     b.HasOne("OnlineShop.Data.Models.ProductVariant", "ProductVariant")
                         .WithMany("CartItems")
                         .HasForeignKey("ProductVariantId")
-                        .IsRequired()
-                        .HasConstraintName("cart_items_product_var_id_fkey");
+                        .IsRequired();
 
                     b.HasOne("OnlineShop.Data.Models.User", "User")
                         .WithMany("CartItems")
                         .HasForeignKey("UserId")
-                        .IsRequired()
-                        .HasConstraintName("cart_items_user_id_fkey");
+                        .IsRequired();
 
                     b.Navigation("ProductVariant");
 
@@ -518,14 +439,12 @@ namespace OnlineShop.Migrations
                 {
                     b.HasOne("OnlineShop.Data.Models.Category", "ParentCategory")
                         .WithMany("Categories")
-                        .HasForeignKey("ParentCategoryId")
-                        .HasConstraintName("parentcategory_categories_id_fkey");
+                        .HasForeignKey("ParentCategoryId");
 
                     b.HasOne("OnlineShop.Data.Models.Section", "Section")
                         .WithMany("Categories")
                         .HasForeignKey("SectionId")
-                        .IsRequired()
-                        .HasConstraintName("section_categories_id_fkey");
+                        .IsRequired();
 
                     b.Navigation("ParentCategory");
 
@@ -537,8 +456,7 @@ namespace OnlineShop.Migrations
                     b.HasOne("OnlineShop.Data.Models.Product", "Product")
                         .WithMany("Media")
                         .HasForeignKey("ProductId")
-                        .IsRequired()
-                        .HasConstraintName("media_product_id_fkey");
+                        .IsRequired();
 
                     b.Navigation("Product");
                 });
@@ -548,14 +466,12 @@ namespace OnlineShop.Migrations
                     b.HasOne("OnlineShop.Data.Models.Address", "Address")
                         .WithMany("Orders")
                         .HasForeignKey("AddressId")
-                        .IsRequired()
-                        .HasConstraintName("orders_adress_id_fkey");
+                        .IsRequired();
 
                     b.HasOne("OnlineShop.Data.Models.User", "User")
                         .WithMany("Orders")
                         .HasForeignKey("UserId")
-                        .IsRequired()
-                        .HasConstraintName("orders_user_id_fkey");
+                        .IsRequired();
 
                     b.Navigation("Address");
 
@@ -567,14 +483,12 @@ namespace OnlineShop.Migrations
                     b.HasOne("OnlineShop.Data.Models.Order", "Order")
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
-                        .IsRequired()
-                        .HasConstraintName("order_items_order_id_fkey");
+                        .IsRequired();
 
                     b.HasOne("OnlineShop.Data.Models.ProductVariant", "ProductVariant")
                         .WithMany("OrderItems")
                         .HasForeignKey("ProductVariantId")
-                        .IsRequired()
-                        .HasConstraintName("order_items_product_var_id_fkey");
+                        .IsRequired();
 
                     b.Navigation("Order");
 
@@ -586,8 +500,7 @@ namespace OnlineShop.Migrations
                     b.HasOne("OnlineShop.Data.Models.Order", "Order")
                         .WithMany()
                         .HasForeignKey("OrderId")
-                        .IsRequired()
-                        .HasConstraintName("order_transactions_transaction_id_fkey");
+                        .IsRequired();
 
                     b.Navigation("Order");
                 });
@@ -597,14 +510,12 @@ namespace OnlineShop.Migrations
                     b.HasOne("OnlineShop.Data.Models.Brand", "Brand")
                         .WithMany("Products")
                         .HasForeignKey("BrandId")
-                        .IsRequired()
-                        .HasConstraintName("products_brand_id_fkey");
+                        .IsRequired();
 
                     b.HasOne("OnlineShop.Data.Models.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
-                        .IsRequired()
-                        .HasConstraintName("products_category_id_fkey");
+                        .IsRequired();
 
                     b.Navigation("Brand");
 
@@ -616,20 +527,17 @@ namespace OnlineShop.Migrations
                     b.HasOne("OnlineShop.Data.Models.Color", "Color")
                         .WithMany("ProductVariants")
                         .HasForeignKey("ColorId")
-                        .IsRequired()
-                        .HasConstraintName("product_variants_color_id_fkey");
+                        .IsRequired();
 
                     b.HasOne("OnlineShop.Data.Models.Product", "Product")
                         .WithMany("ProductVariants")
                         .HasForeignKey("ProductId")
-                        .IsRequired()
-                        .HasConstraintName("product_variants_product_id_fkey");
+                        .IsRequired();
 
                     b.HasOne("OnlineShop.Data.Models.Size", "Size")
                         .WithMany("ProductVariants")
                         .HasForeignKey("SizeId")
-                        .IsRequired()
-                        .HasConstraintName("product_variants_size_id_fkey");
+                        .IsRequired();
 
                     b.Navigation("Color");
 
@@ -643,14 +551,12 @@ namespace OnlineShop.Migrations
                     b.HasOne("OnlineShop.Data.Models.Product", "Product")
                         .WithMany("Reviews")
                         .HasForeignKey("ProductId")
-                        .IsRequired()
-                        .HasConstraintName("reviews_product_id_fkey");
+                        .IsRequired();
 
                     b.HasOne("OnlineShop.Data.Models.User", "User")
                         .WithMany("Reviews")
                         .HasForeignKey("UserId")
-                        .IsRequired()
-                        .HasConstraintName("reviews_user_id_fkey");
+                        .IsRequired();
 
                     b.Navigation("Product");
 
