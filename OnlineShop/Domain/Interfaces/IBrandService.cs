@@ -1,13 +1,12 @@
-﻿using OnlineShop.Data.Models;
-using OnlineShop.Domain.Dtos;
+﻿using OnlineShop.Domain.Dtos;
 
 namespace OnlineShop.Domain.Interfaces;
 
 public interface IBrandService
 {
     Task<bool> Add(BrandDto brand);
-    IEnumerable<Brand> GetAll();
-    Task<Brand> Get(Guid id);
-    Task <bool> Remove(Guid id);
-    Task<bool> Update(Guid id, BrandDto brand);
+    Task<IEnumerable<BrandDto>> GetAll();
+    Task<BrandDto> GetById(Guid id);
+    Task<bool> RemoveById(Guid id);
+    Task<bool> ChangeName(Guid id, string name);
 }

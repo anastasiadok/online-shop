@@ -4,7 +4,7 @@ public class User
 {
     public Guid UserId { get; set; }
 
-    public UserType Role { get; set; }
+    public UserType Role { get; set; } = UserType.User;
 
     public string Email { get; set; } = null!;
 
