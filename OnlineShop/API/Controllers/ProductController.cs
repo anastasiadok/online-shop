@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using OnlineShop.Data.Models;
 using OnlineShop.Domain.Dtos;
 using OnlineShop.Domain.Interfaces;
 using Sieve.Models;
@@ -40,7 +38,7 @@ public class ProductController : Controller
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ProductDto>>> GetProductsByFilter([FromBody] SieveModel sieveModel)
+    public async Task<ActionResult<IEnumerable<ProductDto>>> GetProductsByFilter([FromQuery] SieveModel sieveModel)
     {
         var products = await _productService.GetProductsByFilter(sieveModel);
         return Ok(products);

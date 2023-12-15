@@ -12,7 +12,7 @@ namespace OnlineShop.Domain.Services;
 
 public class ProductService : BaseService, IProductService
 {
-    SieveProcessor _sieveProcessor;
+    private readonly SieveProcessor _sieveProcessor;
     public ProductService(OnlineshopContext context, SieveProcessor sieveProcessor) : base(context)
     {
         _sieveProcessor = sieveProcessor;

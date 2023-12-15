@@ -1,6 +1,7 @@
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using OnlineShop.Data;
+using OnlineShop.Domain;
 using OnlineShop.Domain.Interfaces;
 using OnlineShop.Domain.Services;
 using Sieve.Services;
@@ -37,7 +38,7 @@ public class Program
         builder.Services.AddScoped<ISizeService, SizeService>();
         builder.Services.AddScoped<IUserService, UserService>();
 
-        builder.Services.AddScoped<SieveProcessor>();
+        builder.Services.AddScoped<SieveProcessor, ApplicationSieveProcessor>();
 
         var app = builder.Build();
 
