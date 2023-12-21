@@ -8,6 +8,8 @@ public class OrderItem
 
     public int Quantity { get; set; }
 
+    public decimal Price { get; set; }
+
     public virtual Order Order { get; set; } = null!;
 
     public virtual ProductVariant ProductVariant { get; set; } = null!;

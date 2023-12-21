@@ -13,7 +13,7 @@ namespace OnlineShop.Migrations
         {
             migrationBuilder.AlterDatabase()
                 .Annotation("Npgsql:Enum:order_status", "in_review,in_delivery,completed,cancelled")
-                .Annotation("Npgsql:Enum:user_type", "admin,user");
+                .Annotation("Npgsql:Enum:user_type", "user,admin");
 
             migrationBuilder.CreateTable(
                 name: "Brands",
@@ -299,7 +299,8 @@ namespace OnlineShop.Migrations
                 {
                     ProductVariantId = table.Column<Guid>(type: "uuid", nullable: false),
                     OrderId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Quantity = table.Column<int>(type: "integer", nullable: false)
+                    Quantity = table.Column<int>(type: "integer", nullable: false),
+                    Price = table.Column<decimal>(type: "numeric", nullable: false)
                 },
                 constraints: table =>
                 {

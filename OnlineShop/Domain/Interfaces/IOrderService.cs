@@ -9,4 +9,6 @@ public interface IOrderService
     Task<IEnumerable<OrderDto>> GetUserOrders(Guid userId);
     Task<OrderDto> GetById(Guid id);
     Task<bool> ChangeStatus(Guid id, OrderStatus status);
+
+    Task<bool> CancelOrder(Guid id);
 }

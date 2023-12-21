@@ -9,4 +9,6 @@ public interface ICategoryService
     Task<bool> ChangeName(Guid id, string name);
     Task<bool> ChangeParentCategory(Guid id, Guid parentCategoryId);
     Task<bool> ChangeSection(Guid id, Guid sectionId);
+
+
 }

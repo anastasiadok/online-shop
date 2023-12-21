@@ -17,10 +17,19 @@ public class MediaService : BaseService, IMediaService
         return mediaList.Select(m => m.Adapt<MediaDto>());
     }
 
-    public async Task<bool> Add(MediaDto mediaDto)
+    public async Task<bool> Add(MediaCreationDto mediaCreationDto)
     {
-        var media = mediaDto.Adapt<Media>();
+        var media = mediaCreationDto.Adapt<Media>();
         media.MediaId = Guid.NewGuid();
+
+        using (var memoryStream = new MemoryStream())
+        {
+            await mediaCreationDto.File.CopyToAsync(memoryStream);
+            media.Bytes = memoryStream.ToArray();
+        }
+
+        media.FileName = mediaCreationDto.File.Name;
+        media.FileType = mediaCreationDto.File.ContentType;
 
         await _context.Media.AddAsync(media);
         await _context.SaveChangesAsync();

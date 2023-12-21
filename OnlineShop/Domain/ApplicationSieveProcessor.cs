@@ -21,10 +21,6 @@ public class ApplicationSieveProcessor : SieveProcessor
         
         mapper.Property<ProductDto>(p=>p.Name).CanSort();
 
-        mapper.Property<ProductDto>(p => p.ProductVariants.Select(pv => pv.ColorId)).CanFilter();
-
-        mapper.Property<ProductDto>(p => p.ProductVariants.Select(pv => pv.SizeId)).CanFilter();
-       
         return mapper;
     }
 }

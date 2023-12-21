@@ -50,7 +50,8 @@ public class OrderService : BaseService, IOrderService
             {
                 ProductVariantId = item.ProductVariantId,
                 Quantity = item.Quantity,
-                OrderId = order.OrderId
+                OrderId = order.OrderId,
+                Price = item.ProductVariant.Product.Price
             });
         }
 
@@ -75,14 +76,37 @@ public class OrderService : BaseService, IOrderService
 
     public async Task<bool> ChangeStatus(Guid id, OrderStatus status)
     {
-        var old = await _context.Orders.FindAsync(id);
+        var order = await _context.Orders.FindAsync(id);
 
-        if (old is null)
+        if (order is null)
             return false;
 
-        old.Status = status;
+        if (order.Status == OrderStatus.Cancelled)
+            return false;
+
+        if (order.Status >= status)
+            return false;
+
+        order.Status = status;
         await _context.SaveChangesAsync();
 
         return true;
+    }
+
+    public async Task<bool> CancelOrder(Guid id)
+    {
+        var order = await _context.Orders.FindAsync(id);
+
+        if(order is null) 
+            return false;
+
+        if (order.Status == OrderStatus.Completed)
+            return false;
+
+        order.Status = OrderStatus.Cancelled;
+        await _context.SaveChangesAsync();
+
+        return true;
+
     }
 }

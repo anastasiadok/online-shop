@@ -54,4 +54,14 @@ public class OrderController : Controller
 
         return Ok();
     }
+
+    [HttpPatch("{id}/cancel")]
+    public async Task<IActionResult> CancelOrder([FromRoute] Guid id)
+    {
+        bool result = await _orderService.CancelOrder(id);
+        if (!result)
+            return NotFound();
+
+        return Ok();
+    }
 }

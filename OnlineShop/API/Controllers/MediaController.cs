@@ -22,9 +22,9 @@ public class MediaController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Add([FromBody] MediaDto mediaDto)
+    public async Task<IActionResult> Add([FromForm] MediaCreationDto mediaCreationDto)
     {
-        bool result = await _mediaService.Add(mediaDto);
+        bool result = await _mediaService.Add(mediaCreationDto);
 
         if (!result)
             return BadRequest();
