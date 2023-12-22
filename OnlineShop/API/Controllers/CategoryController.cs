@@ -1,14 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using OnlineShop.Data.Models;
 using OnlineShop.Domain.Dtos;
 using OnlineShop.Domain.Interfaces;
-using OnlineShop.Domain.Services;
 
 namespace OnlineShop.API.Controllers;
 
 [Route("api/categories")]
 [ApiController]
-public class CategoryController:Controller
+public class CategoryController : Controller
 {
     private readonly ICategoryService _categoryService;
     public CategoryController(ICategoryService categoryService)
@@ -17,7 +15,7 @@ public class CategoryController:Controller
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<CategoryDto>> Get([FromRoute] Guid id)
+    public async Task<ActionResult<CategoryDto>> GetById([FromRoute] Guid id)
     {
         var category = await _categoryService.GetById(id);
 
@@ -25,6 +23,13 @@ public class CategoryController:Controller
             return NotFound();
 
         return Ok(category);
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<CategoryDto>> GetAll()
+    {
+        var categories = await _categoryService.GetAll();
+        return Ok(categories);
     }
 
     [HttpPost]

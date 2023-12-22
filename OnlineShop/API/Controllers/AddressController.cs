@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using OnlineShop.Data.Models;
 using OnlineShop.Domain.Dtos;
 using OnlineShop.Domain.Interfaces;
-using OnlineShop.Domain.Services;
-using System.Net;
 
 namespace OnlineShop.API.Controllers;
 
@@ -14,11 +11,11 @@ public class AddressController : Controller
     private readonly IAddressService _addressService;
     public AddressController(IAddressService addressService)
     {
-        _addressService=addressService; 
+        _addressService = addressService;
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<AddressDto>> Get([FromRoute] Guid id)
+    public async Task<ActionResult<AddressDto>> GetById([FromRoute] Guid id)
     {
         var address = await _addressService.GetById(id);
 
@@ -26,6 +23,13 @@ public class AddressController : Controller
             return NotFound();
 
         return Ok(address);
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<AddressDto>> GetAll()
+    {
+        var addresses = await _addressService.GetAll();
+        return Ok(addresses);
     }
 
     [HttpPost]

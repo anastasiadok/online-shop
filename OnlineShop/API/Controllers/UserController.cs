@@ -16,7 +16,7 @@ public class UserController : Controller
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<UserDto>> Get([FromRoute] Guid id)
+    public async Task<ActionResult<UserDto>> GetById([FromRoute] Guid id)
     {
         var userDto = await _userService.GetById(id);
         return Ok(userDto);
@@ -41,5 +41,12 @@ public class UserController : Controller
             return BadRequest();
 
         return Ok();
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<UserDto>>> GetAll()
+    {
+        var users = await _userService.GetAll();
+        return Ok(users);
     }
 }

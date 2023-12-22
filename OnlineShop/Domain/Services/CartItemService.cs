@@ -10,6 +10,18 @@ namespace OnlineShop.Domain.Services;
 public class CartItemService : BaseService, ICartItemService
 {
     public CartItemService(OnlineshopContext context) : base(context) { }
+
+    public async Task<CartItemDto> GetById(Guid id)
+    {
+        var item = await _context.CartItems.FindAsync(id);
+        return item?.Adapt<CartItemDto>();
+    }
+
+    public async Task<IEnumerable<CartItemDto>> GetAll()
+    {
+        return await _context.CartItems.Select(a => a.Adapt<CartItemDto>()).ToListAsync();
+    }
+
     public async Task<bool> Add(CartItemDto cartItem)
     {
         await _context.CartItems.AddAsync(cartItem.Adapt<CartItem>());
@@ -24,7 +36,7 @@ public class CartItemService : BaseService, ICartItemService
             .Where(i => i.UserId == userId)
             .ToListAsync();
 
-        return items.Select(i=>i.Adapt<CartItemDto>());
+        return items.Select(i => i.Adapt<CartItemDto>());
     }
 
     public async Task<bool> RemoveByKey(Guid userId, Guid productVariantId)

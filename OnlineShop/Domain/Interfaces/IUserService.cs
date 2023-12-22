@@ -7,4 +7,5 @@ public interface IUserService
     Task<UserDto> GetById(Guid id);
     Task<bool> Create(UserCreationDto user);
     Task<bool> ChangeUserInfo(UserDto userDto);
+    Task<IEnumerable<UserDto>> GetAll();
 }

@@ -97,7 +97,7 @@ public class OrderService : BaseService, IOrderService
     {
         var order = await _context.Orders.FindAsync(id);
 
-        if(order is null) 
+        if (order is null)
             return false;
 
         if (order.Status == OrderStatus.Completed)
@@ -108,5 +108,10 @@ public class OrderService : BaseService, IOrderService
 
         return true;
 
+    }
+
+    public async Task<IEnumerable<OrderDto>> GetAll()
+    {
+        return await _context.Orders.Select(o => o.Adapt<OrderDto>()).ToListAsync();
     }
 }

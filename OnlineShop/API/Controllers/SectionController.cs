@@ -15,7 +15,7 @@ public class SectionController : Controller
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<SectionDto>> Get([FromRoute] Guid id)
+    public async Task<ActionResult<SectionDto>> GetById([FromRoute] Guid id)
     {
         var product = await _sectionService.GetById(id);
         if (product is null)

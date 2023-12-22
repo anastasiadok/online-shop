@@ -1,4 +1,5 @@
 ﻿using Mapster;
+using Microsoft.EntityFrameworkCore;
 using OnlineShop.Data;
 using OnlineShop.Data.Models;
 using OnlineShop.Domain.Dtos;
@@ -14,6 +15,11 @@ public class AddressService : BaseService, IAddressService
     {
         var address = await _context.Addresses.FindAsync(id);
         return address?.Adapt<AddressDto>();
+    }
+
+    public async Task<IEnumerable<AddressDto>> GetAll()
+    {
+        return await _context.Addresses.Select(a => a.Adapt<AddressDto>()).ToListAsync();
     }
 
     public async Task<bool> Add(AddressDto addressDto)

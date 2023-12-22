@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using OnlineShop.Data.Models;
 using OnlineShop.Domain.Dtos;
 using OnlineShop.Domain.Interfaces;
 
@@ -16,7 +15,7 @@ public class ProductVariantController : Controller
     }
 
     [HttpGet("products/{productid}")]
-    public async Task<ActionResult<IEnumerable<ProductVariantDto>>> Get([FromRoute] Guid productid)
+    public async Task<ActionResult<IEnumerable<ProductVariantDto>>> GetByProduct([FromRoute] Guid productid)
     {
         var productVariants = await _productVariantService.GetVariantsForProduct(productid);
 
@@ -35,5 +34,12 @@ public class ProductVariantController : Controller
             return BadRequest();
 
         return Ok();
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<ProductVariantDto>> GetAll()
+    {
+        var productVariants = await _productVariantService.GetAll();
+        return Ok(productVariants);
     }
 }

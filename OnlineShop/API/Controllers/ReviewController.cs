@@ -46,5 +46,22 @@ public class ReviewController : Controller
         return Ok(reviews);
     }
 
+    [HttpGet("{id}")]
+    public async Task<ActionResult<ReviewDto>> GetById([FromRoute] Guid id)
+    {
+        var review = await _reviewService.GetById(id);
 
+        if (review is null)
+            return NotFound();
+
+        return Ok(review);
+    }
+
+
+    [HttpGet]
+    public async Task<ActionResult<ReviewDto>> GetAll()
+    {
+        var reviews = await _reviewService.GetAll();
+        return Ok(reviews);
+    }
 }

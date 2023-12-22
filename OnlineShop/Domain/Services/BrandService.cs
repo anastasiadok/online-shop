@@ -31,7 +31,7 @@ public class BrandService : BaseService, IBrandService
     public async Task<IEnumerable<BrandDto>> GetAll()
     {
         var brands = await _context.Brands.ToListAsync();
-        return brands.Select(b=>b.Adapt<BrandDto>());
+        return brands.Select(b => b.Adapt<BrandDto>());
     }
 
     public async Task<bool> RemoveById(Guid id)

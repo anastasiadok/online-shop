@@ -4,7 +4,6 @@ using OnlineShop.Data;
 using OnlineShop.Data.Models;
 using OnlineShop.Domain.Dtos;
 using OnlineShop.Domain.Interfaces;
-using System.ComponentModel;
 
 namespace OnlineShop.Domain.Services;
 
@@ -34,13 +33,13 @@ public class SectionService : BaseService, ISectionService
 
     public async Task<IEnumerable<SectionDto>> GetAll()
     {
-        var sections = await _context.Sections.Include(s=>s.Categories).ToListAsync();
+        var sections = await _context.Sections.Include(s => s.Categories).ToListAsync();
         return sections.Select(m => m.Adapt<SectionDto>());
     }
 
     public async Task<SectionDto> GetById(Guid id)
     {
-        var section = await _context.Sections.Where(s => s.SectionId == id).Include(s => s.Categories).FirstAsync() ;
+        var section = await _context.Sections.FindAsync(id);
         return section.Adapt<SectionDto>();
     }
 }

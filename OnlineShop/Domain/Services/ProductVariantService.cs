@@ -26,6 +26,17 @@ public class ProductVariantService : BaseService, IProductVariantService
         return true;
     }
 
+    public async Task<IEnumerable<ProductVariantDto>> GetAll()
+    {
+        return await _context.ProductVariants.Select(pv => pv.Adapt<ProductVariantDto>()).ToListAsync();
+    }
+
+    public async Task<ProductVariantDto> GetById(Guid id)
+    {
+        var productVariant = await _context.ProductVariants.FindAsync(id);
+        return productVariant?.Adapt<ProductVariantDto>();
+    }
+
     public async Task<IEnumerable<ProductVariantDto>> GetVariantsForProduct(Guid productId)
     {
         var product = await _context.Products.Where(p => p.ProductId == productId).Include(p => p.ProductVariants).FirstOrDefaultAsync();

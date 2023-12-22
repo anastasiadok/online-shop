@@ -11,4 +11,5 @@ public interface IProductService
     Task<ProductDto> GetById(Guid id);
     Task<IEnumerable<ProductDto>> GetProductsByFilter([FromBody] SieveModel sieveModel);
     Task<bool> ChangeCategory(Guid id, Guid categoryId);
+    Task<IEnumerable<ProductDto>> GetAll();
 }

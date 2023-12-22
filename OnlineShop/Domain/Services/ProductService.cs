@@ -59,17 +59,36 @@ public class ProductService : BaseService, IProductService
 
     public async Task<IEnumerable<ProductDto>> GetProductsByFilter([FromBody] SieveModel sieveModel)
     {
-        var result = _context.Products.Include(p=>p.ProductVariants).AsNoTracking();
-        var products = await _sieveProcessor.Apply(sieveModel, result).ToListAsync(); 
-        return products.Select(p=>p.Adapt<ProductDto>());
+        var result = _context.Products.Include(p => p.ProductVariants).AsNoTracking();
+        var products = await _sieveProcessor.Apply(sieveModel, result).ToListAsync();
+        return products.Select(p => p.Adapt<ProductDto>());
     }
 
     public async Task<IEnumerable<ProductDto>> GetCategoryProducts(Guid categoryId)
     {
-        var category = await _context.Categories.Where(c => c.CategoryId == categoryId).Include(c => c.Products).FirstAsync();
+        var category = await _context.Categories.Include(c => c.Categories).Include(c => c.Products).Where(c => c.CategoryId == categoryId).FirstOrDefaultAsync();
         if (category is null)
             return null;
 
-        return category.Products.Select(p => p.Adapt<ProductDto>());
+        List<ProductDto> products = new();
+
+        Stack<Category> stack = new();
+        stack.Push(category);
+
+        while (stack.Count > 0)
+        {
+            Category current = stack.Pop();
+            products.AddRange(current.Products.Select(p => p.Adapt<ProductDto>()));
+
+            foreach (var child in current.Categories)
+                stack.Push(child);
+        }
+
+        return products;
+    }
+
+    public async Task<IEnumerable<ProductDto>> GetAll()
+    {
+        return await _context.Products.Select(p => p.Adapt<ProductDto>()).ToListAsync();
     }
 }

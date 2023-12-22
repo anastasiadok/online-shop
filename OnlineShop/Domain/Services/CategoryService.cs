@@ -1,4 +1,5 @@
 ﻿using Mapster;
+using Microsoft.EntityFrameworkCore;
 using OnlineShop.Data;
 using OnlineShop.Data.Models;
 using OnlineShop.Domain.Dtos;
@@ -50,7 +51,7 @@ public class CategoryService : BaseService, ICategoryService
 
     public async Task<bool> ChangeParentCategory(Guid id, Guid parentCategoryId)
     {
-        var old = await _context.Categories.FindAsync(id);
+        var old = await _context.Categories.Include(c => c.Categories).Where(c => c.CategoryId == id).SingleOrDefaultAsync();
         if (old is null)
             return false;
 
@@ -68,7 +69,7 @@ public class CategoryService : BaseService, ICategoryService
         return true;
     }
 
-    public bool IsChangingValid(Category node, Category parent)
+    private static bool IsChangingValid(Category node, Category parent)
     {
         Stack<Category> stack = new();
         stack.Push(node);
@@ -76,10 +77,10 @@ public class CategoryService : BaseService, ICategoryService
         while (stack.Count > 0)
         {
             Category current = stack.Pop();
-            if (current == parent)
+            if (current.CategoryId == parent.CategoryId)
                 return false;
 
-            foreach (Category child in current.Categories)
+            foreach (var child in current.Categories)
                 stack.Push(child);
         }
 
@@ -108,7 +109,12 @@ public class CategoryService : BaseService, ICategoryService
 
     public async Task<CategoryDto> GetById(Guid id)
     {
-        var category = await _context.Categories.FindAsync(id);
-        return category.Adapt<CategoryDto>();
+        var category = await _context.Categories.Include(c => c.Categories).Where(c => c.CategoryId == id).SingleOrDefaultAsync();
+        return category?.Adapt<CategoryDto>();
+    }
+
+    public async Task<IEnumerable<CategoryDto>> GetAll()
+    {
+        return await _context.Categories.Select(c => c.Adapt<CategoryDto>()).ToListAsync();
     }
 }

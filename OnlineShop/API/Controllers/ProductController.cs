@@ -16,9 +16,9 @@ public class ProductController : Controller
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<ProductDto>> Get([FromRoute] Guid id)
+    public async Task<ActionResult<ProductDto>> GetById([FromRoute] Guid id)
     {
-        var product =await _productService.GetById(id);
+        var product = await _productService.GetById(id);
 
         if (product is null)
             return NotFound();
@@ -37,7 +37,7 @@ public class ProductController : Controller
         return Ok(products);
     }
 
-    [HttpGet]
+    [HttpGet("filtered")]
     public async Task<ActionResult<IEnumerable<ProductDto>>> GetProductsByFilter([FromQuery] SieveModel sieveModel)
     {
         var products = await _productService.GetProductsByFilter(sieveModel);
@@ -57,12 +57,19 @@ public class ProductController : Controller
 
     [HttpPatch("{id}/category/{categoryid}")]
     public async Task<IActionResult> ChangeCategory([FromRoute] Guid id, [FromRoute] Guid categoryid)
-    { 
+    {
         bool result = await _productService.ChangeCategory(id, categoryid);
 
         if (!result)
             return NotFound();
 
         return Ok();
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<ProductDto>> GetAll()
+    {
+        var products = await _productService.GetAll();
+        return Ok(products);
     }
 }

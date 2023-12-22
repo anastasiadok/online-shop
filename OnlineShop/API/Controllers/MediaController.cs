@@ -15,7 +15,7 @@ public class MediaController : Controller
     }
 
     [HttpGet("products/{productid}")]
-    public async Task<ActionResult<IEnumerable<MediaDto>>> Get([FromRoute] Guid productid)
+    public async Task<ActionResult<IEnumerable<MediaDto>>> GetByProduct([FromRoute] Guid productid)
     {
         var mediaDtoList = await _mediaService.GetProductMedia(productid);
         return Ok(mediaDtoList);
@@ -41,5 +41,23 @@ public class MediaController : Controller
             return NotFound();
 
         return Ok();
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<MediaDto>> GetById([FromRoute] Guid id)
+    {
+        var media = await _mediaService.GetById(id);
+
+        if (media is null)
+            return NotFound();
+
+        return Ok(media);
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<MediaDto>> GetAll()
+    {
+        var media = await _mediaService.GetAll();
+        return Ok(media);
     }
 }

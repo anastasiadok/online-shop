@@ -4,7 +4,6 @@ using OnlineShop.Domain.Interfaces;
 
 namespace OnlineShop.API.Controllers;
 
-
 [Route("api/sizes")]
 [ApiController]
 public class SizeController : Controller
@@ -23,7 +22,7 @@ public class SizeController : Controller
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<SizeDto>> Get([FromRoute] Guid id)
+    public async Task<ActionResult<SizeDto>> GetById([FromRoute] Guid id)
     {
         var size = await _sizeService.GetById(id);
 

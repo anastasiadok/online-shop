@@ -6,16 +6,16 @@ namespace OnlineShop.API.Controllers;
 
 [Route("api/cartitems")]
 [ApiController]
-public class CartItemController:Controller
+public class CartItemController : Controller
 {
     private readonly ICartItemService _cartItemService;
     public CartItemController(ICartItemService cartItemService)
     {
-        _cartItemService= cartItemService;
+        _cartItemService = cartItemService;
     }
 
     [HttpGet("users/{userid}")]
-    public async Task<ActionResult<IEnumerable<CartItemDto>>> Get([FromRoute] Guid userid)
+    public async Task<ActionResult<IEnumerable<CartItemDto>>> GetById([FromRoute] Guid userid)
     {
         var cartItem = await _cartItemService.GetUserCartItems(userid);
         return Ok(cartItem);
@@ -52,5 +52,12 @@ public class CartItemController:Controller
             return NotFound();
 
         return Ok();
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<CartItemDto>> GetAll()
+    {
+        var items = await _cartItemService.GetAll();
+        return Ok(items);
     }
 }

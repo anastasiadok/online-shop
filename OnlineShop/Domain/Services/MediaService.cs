@@ -49,4 +49,15 @@ public class MediaService : BaseService, IMediaService
 
         return true;
     }
+
+    public async Task<MediaDto> GetById(Guid id)
+    {
+        var media = await _context.Media.FindAsync(id);
+        return media?.Adapt<MediaDto>();
+    }
+
+    public async Task<IEnumerable<MediaDto>> GetAll()
+    {
+        return await _context.Media.Select(a => a.Adapt<MediaDto>()).ToListAsync();
+    }
 }

@@ -7,4 +7,8 @@ public interface IMediaService
     Task<IEnumerable<MediaDto>> GetProductMedia(Guid productId);
     Task<bool> Add(MediaCreationDto mediaCreationDto);
     Task<bool> RemoveById(Guid id);
+
+    Task<MediaDto> GetById(Guid id);
+
+    Task<IEnumerable<MediaDto>> GetAll();
 }

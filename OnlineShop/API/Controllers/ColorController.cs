@@ -22,7 +22,7 @@ public class ColorController : Controller
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<ColorDto>> Get([FromRoute] Guid id)
+    public async Task<ActionResult<ColorDto>> GetById([FromRoute] Guid id)
     {
         var color = await _colorService.GetById(id);
 

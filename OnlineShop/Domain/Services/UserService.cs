@@ -1,5 +1,6 @@
 ﻿using Mapster;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using OnlineShop.Data;
 using OnlineShop.Data.Models;
 using OnlineShop.Domain.Dtos;
@@ -42,5 +43,10 @@ public class UserService : BaseService, IUserService
     {
         var user = await _context.Users.FindAsync(id);
         return user?.Adapt<UserDto>();
+    }
+
+    public async Task<IEnumerable<UserDto>> GetAll()
+    {
+        return await _context.Users.Select(pv => pv.Adapt<UserDto>()).ToListAsync();
     }
 }

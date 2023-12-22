@@ -34,6 +34,17 @@ public class ReviewService : BaseService, IReviewService
         return true;
     }
 
+    public async Task<IEnumerable<ReviewDto>> GetAll()
+    {
+        return await _context.Reviews.Select(pv => pv.Adapt<ReviewDto>()).ToListAsync();
+    }
+
+    public async Task<ReviewDto> GetById(Guid id)
+    {
+        var review = await _context.Reviews.FindAsync(id);
+        return review?.Adapt<ReviewDto>();
+    }
+
     public async Task<IEnumerable<ReviewDto>> GetProductReviews(Guid productId)
     {
         var product = await _context.Products.Where(p => p.ProductId == productId).Include(p => p.Reviews).FirstOrDefaultAsync();

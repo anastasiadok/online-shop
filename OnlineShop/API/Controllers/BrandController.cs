@@ -14,15 +14,8 @@ public class BrandController : Controller
         _brandService = brandService;
     }
 
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<BrandDto>>> GetAll()
-    {
-        var brands = await _brandService.GetAll();
-        return Ok(brands);
-    }
-
     [HttpGet("{id}")]
-    public async Task<ActionResult<BrandDto>> Get([FromRoute] Guid id)
+    public async Task<ActionResult<BrandDto>> GetById([FromRoute] Guid id)
     {
         var brand = await _brandService.GetById(id);
 
@@ -30,6 +23,13 @@ public class BrandController : Controller
             return NotFound();
 
         return Ok(brand);
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<BrandDto>>> GetAll()
+    {
+        var brands = await _brandService.GetAll();
+        return Ok(brands);
     }
 
     [HttpPost]
@@ -46,7 +46,7 @@ public class BrandController : Controller
     [HttpPatch("{id}/name/{name}")]
     public async Task<IActionResult> UpdateName([FromRoute] Guid id, [FromRoute] string name)
     {
-        bool result = await _brandService.ChangeName(id,name);
+        bool result = await _brandService.ChangeName(id, name);
 
         if (!result)
             return NotFound();

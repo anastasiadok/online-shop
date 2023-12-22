@@ -16,7 +16,7 @@ public class OrderController : Controller
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<OrderDto>> Get([FromRoute] Guid id)
+    public async Task<ActionResult<OrderDto>> GetById([FromRoute] Guid id)
     {
         var brand = await _orderService.GetById(id);
 
@@ -63,5 +63,12 @@ public class OrderController : Controller
             return NotFound();
 
         return Ok();
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<OrderDto>> GetAll()
+    {
+        var orders = await _orderService.GetAll();
+        return Ok(orders);
     }
 }
