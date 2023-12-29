@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using OnlineShop.Data;
 using OnlineShop.Data.Models;
 using OnlineShop.Domain.Dtos;
+using OnlineShop.Domain.Exceptions;
 using OnlineShop.Domain.Interfaces;
 
 namespace OnlineShop.Domain.Services;
@@ -11,18 +12,17 @@ public class ReviewService : BaseService, IReviewService
 {
     public ReviewService(OnlineshopContext context) : base(context) { }
 
-    public async Task<bool> Add(ReviewDto reviewDto)
+    public async Task Add(ReviewDto reviewDto)
     {
         var product = await _context.Products.Where(p => p.ProductId == reviewDto.ProductId).Include(p => p.Reviews).FirstOrDefaultAsync();
         if (product is null)
-            return false;
+            throw new BadRequestException("Product doesn't exist");
 
-        var user = await _context.Users.FindAsync(reviewDto.UserId);
-        if (user is null)
-            return false;
+        var user = await _context.Users.FindAsync(reviewDto.UserId) ?? throw new BadRequestException("User doesn't exist");
 
         var review = reviewDto.Adapt<Review>();
         review.ReviewId = Guid.NewGuid();
+
         _context.Reviews.Add(review);
 
         var productReviews = product.Reviews;
@@ -31,18 +31,17 @@ public class ReviewService : BaseService, IReviewService
         review.Product.AverageRating = (float)ratingSum / reviewsCount;
 
         await _context.SaveChangesAsync();
-        return true;
     }
 
     public async Task<IEnumerable<ReviewDto>> GetAll()
     {
-        return await _context.Reviews.Select(pv => pv.Adapt<ReviewDto>()).ToListAsync();
+        return await _context.Reviews.ProjectToType<ReviewDto>().ToListAsync();
     }
 
     public async Task<ReviewDto> GetById(Guid id)
     {
-        var review = await _context.Reviews.FindAsync(id);
-        return review?.Adapt<ReviewDto>();
+        var review = await _context.Reviews.FindAsync(id) ?? throw new NotFoundException("Review");
+        return review.Adapt<ReviewDto>();
     }
 
     public async Task<IEnumerable<ReviewDto>> GetProductReviews(Guid productId)

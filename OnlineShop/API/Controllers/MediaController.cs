@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Domain.Dtos;
 using OnlineShop.Domain.Interfaces;
 
 namespace OnlineShop.API.Controllers;
 
+[AllowAnonymous]
 [Route("api/media")]
 [ApiController]
 public class MediaController : Controller
@@ -24,22 +26,14 @@ public class MediaController : Controller
     [HttpPost]
     public async Task<IActionResult> Add([FromForm] MediaCreationDto mediaCreationDto)
     {
-        bool result = await _mediaService.Add(mediaCreationDto);
-
-        if (!result)
-            return BadRequest();
-
+        await _mediaService.Add(mediaCreationDto);
         return Ok();
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete([FromRoute] Guid id)
     {
-        bool result = await _mediaService.RemoveById(id);
-
-        if (!result)
-            return NotFound();
-
+        await _mediaService.RemoveById(id);
         return Ok();
     }
 
@@ -47,15 +41,11 @@ public class MediaController : Controller
     public async Task<ActionResult<MediaDto>> GetById([FromRoute] Guid id)
     {
         var media = await _mediaService.GetById(id);
-
-        if (media is null)
-            return NotFound();
-
         return Ok(media);
     }
 
     [HttpGet]
-    public async Task<ActionResult<MediaDto>> GetAll()
+    public async Task<ActionResult<IEnumerable<MediaDto>>> GetAll()
     {
         var media = await _mediaService.GetAll();
         return Ok(media);

@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Domain.Dtos;
 using OnlineShop.Domain.Interfaces;
 using Sieve.Models;
 
 namespace OnlineShop.API.Controllers;
 
+[AllowAnonymous]
 [Route("api/products")]
 [ApiController]
 public class ProductController : Controller
@@ -19,10 +21,6 @@ public class ProductController : Controller
     public async Task<ActionResult<ProductDto>> GetById([FromRoute] Guid id)
     {
         var product = await _productService.GetById(id);
-
-        if (product is null)
-            return NotFound();
-
         return Ok(product);
     }
 
@@ -30,10 +28,6 @@ public class ProductController : Controller
     public async Task<ActionResult<IEnumerable<ProductDto>>> GetCategoryProducts([FromRoute] Guid categoryid)
     {
         var products = await _productService.GetCategoryProducts(categoryid);
-
-        if (products is null)
-            return NotFound();
-
         return Ok(products);
     }
 
@@ -47,22 +41,14 @@ public class ProductController : Controller
     [HttpPost]
     public async Task<IActionResult> Add([FromBody] ProductCreationDto product)
     {
-        bool result = await _productService.Add(product);
-
-        if (!result)
-            return BadRequest();
-
+        await _productService.Add(product);
         return Ok();
     }
 
     [HttpPatch("{id}/category/{categoryid}")]
     public async Task<IActionResult> ChangeCategory([FromRoute] Guid id, [FromRoute] Guid categoryid)
     {
-        bool result = await _productService.ChangeCategory(id, categoryid);
-
-        if (!result)
-            return NotFound();
-
+        await _productService.ChangeCategory(id, categoryid);
         return Ok();
     }
 

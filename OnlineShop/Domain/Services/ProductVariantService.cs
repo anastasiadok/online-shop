@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using OnlineShop.Data;
 using OnlineShop.Data.Models;
 using OnlineShop.Domain.Dtos;
+using OnlineShop.Domain.Exceptions;
 using OnlineShop.Domain.Interfaces;
 
 namespace OnlineShop.Domain.Services;
@@ -11,30 +12,27 @@ public class ProductVariantService : BaseService, IProductVariantService
 {
     public ProductVariantService(OnlineshopContext context) : base(context) { }
 
-    public async Task<bool> Add(ProductVariantCreationDto productVariantCreationDto)
+    public async Task Add(ProductVariantCreationDto productVariantCreationDto)
     {
-        var color = await _context.Colors.FindAsync(productVariantCreationDto.ColorId);
-        if (color is null)
-            return false;
-
-        var size = await _context.Sizes.FindAsync(productVariantCreationDto.SizeId);
-        if (size is null)
-            return false;
+        _ = await _context.Colors.FindAsync(productVariantCreationDto.ColorId) ?? throw new BadRequestException("Color doesn't exist");
+        _ = await _context.Sizes.FindAsync(productVariantCreationDto.SizeId) ?? throw new BadRequestException("Size doesn't exist");
 
         var productVariant = productVariantCreationDto.Adapt<ProductVariant>();
         productVariant.ProductVariantId = Guid.NewGuid();
-        return true;
+
+        _context.ProductVariants.Add(productVariant);
+        await _context.SaveChangesAsync();
     }
 
     public async Task<IEnumerable<ProductVariantDto>> GetAll()
     {
-        return await _context.ProductVariants.Select(pv => pv.Adapt<ProductVariantDto>()).ToListAsync();
+        return await _context.ProductVariants.ProjectToType<ProductVariantDto>().ToListAsync();
     }
 
     public async Task<ProductVariantDto> GetById(Guid id)
     {
-        var productVariant = await _context.ProductVariants.FindAsync(id);
-        return productVariant?.Adapt<ProductVariantDto>();
+        var productVariant = await _context.ProductVariants.FindAsync(id) ?? throw new NotFoundException("Product variant");
+        return productVariant.Adapt<ProductVariantDto>();
     }
 
     public async Task<IEnumerable<ProductVariantDto>> GetVariantsForProduct(Guid productId)

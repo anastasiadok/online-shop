@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Domain.Dtos;
 using OnlineShop.Domain.Interfaces;
 
 namespace OnlineShop.API.Controllers;
 
+[AllowAnonymous]
 [Route("api/sizes")]
 [ApiController]
 public class SizeController : Controller
@@ -25,21 +27,13 @@ public class SizeController : Controller
     public async Task<ActionResult<SizeDto>> GetById([FromRoute] Guid id)
     {
         var size = await _sizeService.GetById(id);
-
-        if (size is null)
-            return NotFound();
-
         return Ok(size);
     }
 
     [HttpPost]
     public async Task<IActionResult> Add([FromBody] SizeDto sizeDto)
     {
-        bool result = await _sizeService.Add(sizeDto);
-
-        if (!result)
-            return BadRequest();
-
+        await _sizeService.Add(sizeDto);
         return Ok();
     }
 }

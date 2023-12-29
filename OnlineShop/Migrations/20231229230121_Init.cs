@@ -70,7 +70,7 @@ namespace OnlineShop.Migrations
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     Role = table.Column<int>(type: "integer", nullable: false),
                     Email = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false),
-                    Password = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    PasswordHash = table.Column<byte[]>(type: "bytea", nullable: false),
                     Phone = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
                     FirstName = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
                     LastName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false)
