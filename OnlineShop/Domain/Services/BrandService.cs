@@ -1,29 +1,20 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
 using OnlineShop.Data;
 using OnlineShop.Data.Models;
 using OnlineShop.Domain.Dtos;
 using OnlineShop.Domain.Interfaces;
-using System.Runtime.CompilerServices;
 
 namespace OnlineShop.Domain.Services;
 
-public class BrandService : IBrandService
+public class BrandService : BaseService, IBrandService
 {
-    private readonly OnlineshopContext _context;
+    public BrandService(OnlineshopContext context) : base(context) { }
 
-    public BrandService(OnlineshopContext context)
-    {
-        _context = context;
-    }
     public async Task<bool> Add(BrandDto brand)
     {
-        Brand newBrand = new()
-        {
-            BrandId = Guid.NewGuid(),
-            Name = brand.Name,
-            Products = brand.Products
-        };
+        var newBrand = brand.Adapt<Brand>();
+        newBrand.BrandId = Guid.NewGuid();
 
         await _context.Brands.AddAsync(newBrand);
         await _context.SaveChangesAsync();
@@ -31,17 +22,19 @@ public class BrandService : IBrandService
         return true;
     }
 
-    public async Task<Brand> Get(Guid id)
+    public async Task<BrandDto> GetById(Guid id)
     {
-        return await _context.Brands.FindAsync(id);
+        var brand = await _context.Brands.FindAsync(id);
+        return brand.Adapt<BrandDto>();
     }
 
-    public IEnumerable<Brand> GetAll()
+    public async Task<IEnumerable<BrandDto>> GetAll()
     {
-        return _context.Brands.ToList();
+        var brands = await _context.Brands.ToListAsync();
+        return brands.Select(b => b.Adapt<BrandDto>());
     }
 
-    public async Task<bool> Remove(Guid id)
+    public async Task<bool> RemoveById(Guid id)
     {
         var brand = await _context.Brands.FindAsync(id);
 
@@ -54,16 +47,14 @@ public class BrandService : IBrandService
         return true;
     }
 
-    public async Task<bool> Update(Guid id, BrandDto brand)
+    public async Task<bool> ChangeName(Guid id, string name)
     {
         var old = await _context.Brands.FindAsync(id);
 
         if (old is null)
             return false;
 
-        old.Name = brand.Name;
-        old.Products = brand.Products;
-        _context.Brands.Update(old);
+        old.Name = name;
         await _context.SaveChangesAsync();
 
         return true;

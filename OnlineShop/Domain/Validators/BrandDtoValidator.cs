@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
-using OnlineShop.Domain.Dtos;
+using OnlineShop.Data.Models;
 
 namespace OnlineShop.Domain.Validators;
 
-public class BrandDtoValidator : AbstractValidator<BrandDto>
+public class BrandDtoValidator : AbstractValidator<Brand>
 {
     public BrandDtoValidator()
     {
