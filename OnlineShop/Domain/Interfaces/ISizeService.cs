@@ -6,5 +6,5 @@ public interface ISizeService
 {
     Task<IEnumerable<SizeDto>> GetAll();
     Task<SizeDto> GetById(Guid id);
-    Task<bool> Add(SizeDto sizeDto);
+    Task Add(SizeDto sizeDto);
 }

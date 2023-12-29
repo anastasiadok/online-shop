@@ -387,10 +387,9 @@ namespace OnlineShop.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<string>("Password")
+                    b.Property<byte[]>("PasswordHash")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("bytea");
 
                     b.Property<string>("Phone")
                         .IsRequired()

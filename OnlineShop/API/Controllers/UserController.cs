@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Domain.Dtos;
 using OnlineShop.Domain.Interfaces;
 
@@ -15,6 +16,7 @@ public class UserController : Controller
         _userService = userService;
     }
 
+    [AllowAnonymous]
     [HttpGet("{id}")]
     public async Task<ActionResult<UserDto>> GetById([FromRoute] Guid id)
     {
@@ -22,27 +24,15 @@ public class UserController : Controller
         return Ok(userDto);
     }
 
+    [Authorize]
     [HttpPut]
-    public async Task<IActionResult> ChageUserInfo([FromBody] UserDto userDto)
+    public async Task<IActionResult> ChangeUserInfo([FromBody] UserDto userDto)
     {
-        bool result = await _userService.ChangeUserInfo(userDto);
-
-        if (!result)
-            return BadRequest();
-
-        return Ok();
-    }
-    [HttpPost]
-    public async Task<IActionResult> Add([FromBody] UserCreationDto userDto)
-    {
-        bool result = await _userService.Create(userDto);
-
-        if (!result)
-            return BadRequest();
-
+        await _userService.ChangeUserInfo(userDto);
         return Ok();
     }
 
+    [AllowAnonymous]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<UserDto>>> GetAll()
     {

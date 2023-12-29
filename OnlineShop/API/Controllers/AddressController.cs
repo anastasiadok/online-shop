@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Domain.Dtos;
 using OnlineShop.Domain.Interfaces;
 
 namespace OnlineShop.API.Controllers;
 
+[AllowAnonymous]
 [Route("api/addresses")]
 [ApiController]
 public class AddressController : Controller
@@ -18,10 +20,6 @@ public class AddressController : Controller
     public async Task<ActionResult<AddressDto>> GetById([FromRoute] Guid id)
     {
         var address = await _addressService.GetById(id);
-
-        if (address is null)
-            return NotFound();
-
         return Ok(address);
     }
 
@@ -35,11 +33,7 @@ public class AddressController : Controller
     [HttpPost]
     public async Task<IActionResult> Add([FromBody] AddressDto addressDto)
     {
-        bool result = await _addressService.Add(addressDto);
-
-        if (!result)
-            return BadRequest();
-
+        await _addressService.Add(addressDto);
         return Ok();
     }
 }

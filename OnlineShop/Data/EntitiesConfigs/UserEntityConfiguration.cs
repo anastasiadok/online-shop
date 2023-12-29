@@ -26,9 +26,6 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
         builder.Property(e => e.LastName)
             .HasMaxLength(50);
 
-        builder.Property(e => e.Password)
-            .HasMaxLength(255);
-
         builder.Property(e => e.Phone)
             .HasMaxLength(20);
     }

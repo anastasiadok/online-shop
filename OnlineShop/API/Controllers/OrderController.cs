@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Data.Models;
 using OnlineShop.Domain.Dtos;
 using OnlineShop.Domain.Interfaces;
@@ -15,17 +16,15 @@ public class OrderController : Controller
         _orderService = orderService;
     }
 
+    [AllowAnonymous]
     [HttpGet("{id}")]
     public async Task<ActionResult<OrderDto>> GetById([FromRoute] Guid id)
     {
         var brand = await _orderService.GetById(id);
-
-        if (brand is null)
-            return NotFound();
-
         return Ok(brand);
     }
 
+    [AllowAnonymous]
     [HttpGet("users/{userid}")]
     public async Task<ActionResult<IEnumerable<OrderDto>>> GetUserOrders(Guid userid)
     {
@@ -33,38 +32,31 @@ public class OrderController : Controller
         return Ok(orders);
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> CreateOrderFromUserCart([FromBody] OrderCreationDto orderCreationDto)
     {
-        bool result = await _orderService.CreateFromUserCart(orderCreationDto);
-
-        if (!result)
-            return BadRequest();
-
+        await _orderService.CreateFromUserCart(orderCreationDto);
         return Ok();
     }
 
+    [Authorize]
     [HttpPatch("{id}/status/{status}")]
     public async Task<IActionResult> UpdateStatus([FromRoute] Guid id, [FromRoute] OrderStatus status)
     {
-        bool result = await _orderService.ChangeStatus(id, status);
-
-        if (!result)
-            return NotFound();
-
+        await _orderService.ChangeStatus(id, status);
         return Ok();
     }
 
+    [Authorize]
     [HttpPatch("{id}/cancel")]
     public async Task<IActionResult> CancelOrder([FromRoute] Guid id)
     {
-        bool result = await _orderService.CancelOrder(id);
-        if (!result)
-            return NotFound();
-
+        await _orderService.CancelOrder(id);
         return Ok();
     }
 
+    [AllowAnonymous]
     [HttpGet]
     public async Task<ActionResult<OrderDto>> GetAll()
     {

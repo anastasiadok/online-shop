@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Domain.Dtos;
 using OnlineShop.Domain.Interfaces;
 
 namespace OnlineShop.API.Controllers;
 
+[AllowAnonymous]
 [Route("api/sections")]
 [ApiController]
 public class SectionController : Controller
@@ -18,9 +20,6 @@ public class SectionController : Controller
     public async Task<ActionResult<SectionDto>> GetById([FromRoute] Guid id)
     {
         var product = await _sectionService.GetById(id);
-        if (product is null)
-            return NotFound();
-
         return Ok(product);
     }
 
@@ -34,21 +33,14 @@ public class SectionController : Controller
     [HttpPost]
     public async Task<IActionResult> Add([FromBody] SectionDto section)
     {
-        bool result = await _sectionService.Add(section);
-
-        if (!result)
-            return BadRequest();
-
+        await _sectionService.Add(section);
         return Ok();
     }
 
     [HttpPatch("{id}/name/{name}")]
     public async Task<IActionResult> ChangeName([FromRoute] Guid id, [FromRoute] string name)
     {
-        bool result = await _sectionService.ChangeName(id, name);
-        if (!result)
-            return NotFound();
-
+        await _sectionService.ChangeName(id, name);
         return Ok();
     }
 }

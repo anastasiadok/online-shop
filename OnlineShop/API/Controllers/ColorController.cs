@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Domain.Dtos;
 using OnlineShop.Domain.Interfaces;
 
 namespace OnlineShop.API.Controllers;
 
+[AllowAnonymous]
 [Route("api/colors")]
 [ApiController]
 public class ColorController : Controller
@@ -25,21 +27,13 @@ public class ColorController : Controller
     public async Task<ActionResult<ColorDto>> GetById([FromRoute] Guid id)
     {
         var color = await _colorService.GetById(id);
-
-        if (color is null)
-            return NotFound();
-
         return Ok(color);
     }
 
     [HttpPost]
     public async Task<IActionResult> Add([FromBody] ColorDto colorDto)
     {
-        bool result = await _colorService.Add(colorDto);
-
-        if (!result)
-            return BadRequest();
-
+        await _colorService.Add(colorDto);
         return Ok();
     }
 }

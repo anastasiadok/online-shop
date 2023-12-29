@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Domain.Dtos;
 using OnlineShop.Domain.Interfaces;
 
@@ -14,50 +15,39 @@ public class ReviewController : Controller
         _reviewService = reviewService;
     }
 
+    [AllowAnonymous]
     [HttpGet("products/{productid}")]
     public async Task<ActionResult<IEnumerable<ReviewDto>>> GetProductReviews([FromRoute] Guid productid)
     {
         var reviews = await _reviewService.GetProductReviews(productid);
-        if (reviews is null)
-            return NotFound();
-
         return Ok(reviews);
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> Add([FromBody] ReviewDto reviewDto)
     {
-        bool result = await _reviewService.Add(reviewDto);
-
-        if (!result)
-            return BadRequest();
-
+        await _reviewService.Add(reviewDto);
         return Ok();
     }
 
+    [AllowAnonymous]
     [HttpGet("users/{userid}")]
     public async Task<ActionResult<IEnumerable<ReviewDto>>> GetUserReviews([FromRoute] Guid userid)
     {
         var reviews = await _reviewService.GetUserReviews(userid);
-
-        if (reviews is null)
-            return NotFound();
-
         return Ok(reviews);
     }
 
+    [AllowAnonymous]
     [HttpGet("{id}")]
     public async Task<ActionResult<ReviewDto>> GetById([FromRoute] Guid id)
     {
         var review = await _reviewService.GetById(id);
-
-        if (review is null)
-            return NotFound();
-
         return Ok(review);
     }
 
-
+    [AllowAnonymous]
     [HttpGet]
     public async Task<ActionResult<ReviewDto>> GetAll()
     {

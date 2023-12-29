@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace OnlineShop.Domain.Validators;
 
-public class UserDtoValidator<T> : AbstractValidator<T> where T : UserDto
+public class UserDtoValidator<T> : AbstractValidator<UserDto>
 {
     public UserDtoValidator()
     {

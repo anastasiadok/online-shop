@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Domain.Dtos;
 using OnlineShop.Domain.Interfaces;
 
 namespace OnlineShop.API.Controllers;
 
+[AllowAnonymous]
 [Route("api/productvariants")]
 [ApiController]
 public class ProductVariantController : Controller
@@ -18,21 +20,13 @@ public class ProductVariantController : Controller
     public async Task<ActionResult<IEnumerable<ProductVariantDto>>> GetByProduct([FromRoute] Guid productid)
     {
         var productVariants = await _productVariantService.GetVariantsForProduct(productid);
-
-        if (productVariants is null)
-            return NotFound();
-
         return Ok(productVariants);
     }
 
     [HttpPost]
     public async Task<IActionResult> Add([FromBody] ProductVariantCreationDto productVariantCreationDto)
     {
-        bool result = await _productVariantService.Add(productVariantCreationDto);
-
-        if (!result)
-            return BadRequest();
-
+        await _productVariantService.Add(productVariantCreationDto);
         return Ok();
     }
 

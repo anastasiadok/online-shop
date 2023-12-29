@@ -4,6 +4,7 @@ using OnlineShop.Domain.Interfaces;
 using OnlineShop.Domain.Dtos;
 using Microsoft.EntityFrameworkCore;
 using Mapster;
+using OnlineShop.Domain.Exceptions;
 
 namespace OnlineShop.Domain.Services;
 
@@ -11,7 +12,7 @@ public class OrderService : BaseService, IOrderService
 {
     public OrderService(OnlineshopContext context) : base(context) { }
 
-    public async Task<bool> CreateFromUserCart(OrderCreationDto creationDto)
+    public async Task CreateFromUserCart(OrderCreationDto creationDto)
     {
         var user = await _context.Users
             .Where(u => u.UserId == creationDto.UserId)
@@ -19,7 +20,7 @@ public class OrderService : BaseService, IOrderService
             .FirstOrDefaultAsync();
 
         if (user is null)
-            return false;
+            throw new BadRequestException("User doen't exist");
 
         var cartItems = await _context.CartItems
             .Where(i => i.UserId == creationDto.UserId)
@@ -28,11 +29,11 @@ public class OrderService : BaseService, IOrderService
             .ToListAsync();
 
         if (cartItems.Count == 0)
-            return false;
+            throw new BadRequestException("Cart is empty");
 
-        var address = await _context.Addresses.FindAsync(creationDto.AddressId);
-        if (address is null || address.UserId != creationDto.UserId)
-            return false;
+        var address = await _context.Addresses.FindAsync(creationDto.AddressId) ?? throw new BadRequestException("Adress doesn't exist");
+        if (address.UserId != creationDto.UserId)
+            throw new BadRequestException("Address doesn't belong to user");
 
         Order order = new()
         {
@@ -59,59 +60,46 @@ public class OrderService : BaseService, IOrderService
         await _context.Orders.AddAsync(order);
         _context.CartItems.RemoveRange(cartItems);
         _context.SaveChanges();
-        return true;
     }
 
     public async Task<IEnumerable<OrderDto>> GetUserOrders(Guid userId)
     {
-        var orderList = await _context.Orders.Where(m => m.UserId == userId).ToListAsync();
-        return orderList.Select(m => m.Adapt<OrderDto>());
+        return await _context.Orders.Where(m => m.UserId == userId).ProjectToType<OrderDto>().ToListAsync();
     }
 
     public async Task<OrderDto> GetById(Guid id)
     {
-        var order = await _context.Orders.FindAsync(id);
-        return order?.Adapt<OrderDto>();
+        var order = await _context.Orders.FindAsync(id) ?? throw new NotFoundException("Order");
+        return order.Adapt<OrderDto>();
     }
 
-    public async Task<bool> ChangeStatus(Guid id, OrderStatus status)
+    public async Task ChangeStatus(Guid id, OrderStatus status)
     {
-        var order = await _context.Orders.FindAsync(id);
-
-        if (order is null)
-            return false;
+        var order = await _context.Orders.FindAsync(id) ?? throw new NotFoundException("Order");
 
         if (order.Status == OrderStatus.Cancelled)
-            return false;
+            throw new BadRequestException("Order is cancelled. You can't change its status");
 
         if (order.Status >= status)
-            return false;
+            throw new BadRequestException("You can't downgrade order status");
 
         order.Status = status;
         await _context.SaveChangesAsync();
-
-        return true;
     }
 
-    public async Task<bool> CancelOrder(Guid id)
+    public async Task CancelOrder(Guid id)
     {
-        var order = await _context.Orders.FindAsync(id);
-
-        if (order is null)
-            return false;
+        var order = await _context.Orders.FindAsync(id) ?? throw new NotFoundException("Order");
 
         if (order.Status == OrderStatus.Completed)
-            return false;
+            throw new BadRequestException("Order is completed. You can't cancel it");
 
         order.Status = OrderStatus.Cancelled;
         await _context.SaveChangesAsync();
-
-        return true;
-
     }
 
     public async Task<IEnumerable<OrderDto>> GetAll()
     {
-        return await _context.Orders.Select(o => o.Adapt<OrderDto>()).ToListAsync();
+        return await _context.Orders.ProjectToType<OrderDto>().ToListAsync();
     }
 }

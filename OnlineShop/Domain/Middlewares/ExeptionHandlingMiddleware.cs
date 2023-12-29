@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using OnlineShop.Domain.Exceptions;
+using System.Net;
 using System.Text.Json;
 
 namespace OnlineShop.Domain.Middlewares;
@@ -28,6 +29,16 @@ public class ExceptionHandlingMiddleware
     {
         context.Response.ContentType = "application/json";
         int statusCode = (int)HttpStatusCode.InternalServerError;
+
+        switch (exception)
+        {
+            case NotFoundException:
+                statusCode = (int)HttpStatusCode.NotFound;
+                break;
+            case BadRequestException:
+                statusCode = (int)HttpStatusCode.BadRequest;
+                break;
+        }
         var result = JsonSerializer.Serialize(new
         {
             StatusCode = statusCode,
