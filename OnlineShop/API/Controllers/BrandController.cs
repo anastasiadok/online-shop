@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Domain.Dtos;
 using OnlineShop.Domain.Interfaces;
 
 namespace OnlineShop.API.Controllers;
 
+[AllowAnonymous]
 [Route("api/brands")]
 [ApiController]
 public class BrandController : Controller
@@ -18,10 +20,6 @@ public class BrandController : Controller
     public async Task<ActionResult<BrandDto>> GetById([FromRoute] Guid id)
     {
         var brand = await _brandService.GetById(id);
-
-        if (brand is null)
-            return NotFound();
-
         return Ok(brand);
     }
 
@@ -35,22 +33,14 @@ public class BrandController : Controller
     [HttpPost]
     public async Task<IActionResult> Add([FromBody] BrandDto brand)
     {
-        bool result = await _brandService.Add(brand);
-
-        if (!result)
-            return BadRequest();
-
+        await _brandService.Add(brand);
         return Ok();
     }
 
     [HttpPatch("{id}/name/{name}")]
     public async Task<IActionResult> UpdateName([FromRoute] Guid id, [FromRoute] string name)
     {
-        bool result = await _brandService.ChangeName(id, name);
-
-        if (!result)
-            return NotFound();
-
+        await _brandService.ChangeName(id, name);
         return Ok();
     }
 }

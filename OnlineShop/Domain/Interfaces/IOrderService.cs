@@ -5,10 +5,10 @@ namespace OnlineShop.Domain.Interfaces;
 
 public interface IOrderService
 {
-    Task<bool> CreateFromUserCart(OrderCreationDto creationDto);
+    Task CreateFromUserCart(OrderCreationDto creationDto);
     Task<IEnumerable<OrderDto>> GetUserOrders(Guid userId);
     Task<OrderDto> GetById(Guid id);
-    Task<bool> ChangeStatus(Guid id, OrderStatus status);
-    Task<bool> CancelOrder(Guid id);
+    Task ChangeStatus(Guid id, OrderStatus status);
+    Task CancelOrder(Guid id);
     Task<IEnumerable<OrderDto>> GetAll();
 }

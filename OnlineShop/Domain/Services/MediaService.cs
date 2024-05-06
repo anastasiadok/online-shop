@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using OnlineShop.Data;
 using OnlineShop.Data.Models;
 using OnlineShop.Domain.Dtos;
+using OnlineShop.Domain.Exceptions;
 using OnlineShop.Domain.Interfaces;
 
 namespace OnlineShop.Domain.Services;
@@ -13,12 +14,17 @@ public class MediaService : BaseService, IMediaService
 
     public async Task<IEnumerable<MediaDto>> GetProductMedia(Guid productId)
     {
-        var mediaList = await _context.Media.Where(m => m.ProductId == productId).ToListAsync();
-        return mediaList.Select(m => m.Adapt<MediaDto>());
+        var product = await _context.Products.Where(p => p.ProductId == productId).Include(p=>p.Media).FirstOrDefaultAsync();
+        if (product is null)
+            throw new BadRequestException("Product doesn't exist");
+
+        return product.Media.Select(m => m.Adapt<MediaDto>());
     }
 
-    public async Task<bool> Add(MediaCreationDto mediaCreationDto)
+    public async Task Add(MediaCreationDto mediaCreationDto)
     {
+        _ = await _context.Products.FindAsync(mediaCreationDto.ProductId) ?? throw new BadRequestException("Product doesn't exist");
+
         var media = mediaCreationDto.Adapt<Media>();
         media.MediaId = Guid.NewGuid();
 
@@ -33,31 +39,24 @@ public class MediaService : BaseService, IMediaService
 
         await _context.Media.AddAsync(media);
         await _context.SaveChangesAsync();
-
-        return true;
     }
 
-    public async Task<bool> RemoveById(Guid id)
+    public async Task RemoveById(Guid id)
     {
-        var media = await _context.Media.FindAsync(id);
-
-        if (media is null)
-            return false;
+        var media = await _context.Media.FindAsync(id) ?? throw new NotFoundException("Media");
 
         _context.Media.Remove(media);
         await _context.SaveChangesAsync();
-
-        return true;
     }
 
     public async Task<MediaDto> GetById(Guid id)
     {
-        var media = await _context.Media.FindAsync(id);
-        return media?.Adapt<MediaDto>();
+        var media = await _context.Media.FindAsync(id) ?? throw new NotFoundException("Media");
+        return media.Adapt<MediaDto>();
     }
 
     public async Task<IEnumerable<MediaDto>> GetAll()
     {
-        return await _context.Media.Select(a => a.Adapt<MediaDto>()).ToListAsync();
+        return await _context.Media.ProjectToType<MediaDto>().ToListAsync();
     }
 }
